@@ -28,6 +28,7 @@ import './companies.scss';
 type SearchSubject = {
   search: string;
   specialties: string[];
+  page?: number;
 };
 
 const searchSubject = new Subject<SearchSubject>();
@@ -48,10 +49,12 @@ const Companies: FunctionComponent<Record<string, unknown>> = () => {
   const history = useHistory();
   const { search: searchString } = useLocation();
   const s = new URLSearchParams(searchString).get('s') || '';
+  let p = Number(new URLSearchParams(searchString).get('p') || '');
+  p = p > 0 ? p - 1 : p;
   const specsStr = new URLSearchParams(searchString).get('specs') || '';
   const specs = (specsStr && specsStr.split(',')) || [];
   const [search, setSearch] = useState<string>(s);
-  const [selectedPage, setSelectedPage] = useState<number>(0);
+  const [selectedPage, setSelectedPage] = useState<number>(p);
   const [specialties, setSpecialties] = useState<string[]>(specs);
   const companies =
     useSelector((state: RootState) => state.companies.companies.companies) ||
@@ -96,7 +99,11 @@ const Companies: FunctionComponent<Record<string, unknown>> = () => {
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
-    searchSubject.next({ search: e.target.value, specialties });
+    searchSubject.next({
+      search: e.target.value,
+      specialties,
+      page: selectedPage
+    });
   };
 
   const handlePageClick = ({
@@ -106,14 +113,17 @@ const Companies: FunctionComponent<Record<string, unknown>> = () => {
   }) => {
     setSelectedPage(selectedPage);
     getCompanies({ search, specialties, page: selectedPage });
+    setQueryParams({ search, specialties, page: selectedPage });
   };
 
   const setQueryParams = ({
     search,
-    specialties
+    specialties,
+    page
   }: {
     search: string;
     specialties: string[];
+    page?: number;
   }) => {
     let searchQuery = '';
     if (search) {
@@ -123,6 +133,11 @@ const Companies: FunctionComponent<Record<string, unknown>> = () => {
       searchQuery = `${searchQuery}${
         searchQuery ? '&' : ''
       }${new URLSearchParams({ specs: specialties.join() }).toString()}`;
+    }
+    if (page && page !== 0) {
+      searchQuery = `${searchQuery}${
+        searchQuery ? '&' : ''
+      }${new URLSearchParams({ p: (page + 1).toString() }).toString()}`;
     }
     if (searchQuery) {
       searchQuery = `?${searchQuery}`;
@@ -135,8 +150,8 @@ const Companies: FunctionComponent<Record<string, unknown>> = () => {
 
   useEffect(() => {
     subscription.current = searchResultObservable.subscribe(
-      ({ search, specialties }: SearchSubject) => {
-        setQueryParams({ search, specialties });
+      ({ search, specialties, page }: SearchSubject) => {
+        setQueryParams({ search, specialties, page });
         getCompanyPageAmount({ search, specialties });
         getCompanies({ search, specialties });
       }
@@ -149,7 +164,7 @@ const Companies: FunctionComponent<Record<string, unknown>> = () => {
 
   useEffect(() => {
     getCompanyPageAmount({ search, specialties });
-    getCompanies({ search, specialties });
+    getCompanies({ search, specialties, page: selectedPage });
     getSpecialties();
   }, [getCompanies, getSpecialties, getCompanyPageAmount]);
 
@@ -165,6 +180,7 @@ const Companies: FunctionComponent<Record<string, unknown>> = () => {
       {showPagination && companyPageAmount !== 0 ? (
         <ReactPaginateContainer disabled={companyPageAmount === 1}>
           <ReactPaginate
+            forcePage={selectedPage}
             previousLabel={'← Previous'}
             nextLabel={'Next →'}
             pageCount={companyPageAmount!}
