@@ -1,5 +1,5 @@
 module.exports = {
-  parser: 'babel-eslint',
+  parser: '@typescript-eslint/parser',
   env: {
     es6: true,
     node: true,
@@ -19,7 +19,6 @@ module.exports = {
     }
   },
   root: true,
-  parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'react', 'react-hooks'],
   extends: [
     'eslint:recommended',
