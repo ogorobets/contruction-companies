@@ -1,0 +1,7 @@
+li.pagination__link--disabled {
+  pointer-events: none;
+
+  a {
+    background-color: #c1c1c1;
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "plugins": [
+    [
+      "module-resolver",
+      {
+        "root": ["./src"],
+        "extensions": [".ts", ".json"],
+        "alias": {
+          "@src": "./src",
+          "@config": "./src/config",
+          "@schema": "./src/db/schemas",
+          "@type": "./src/db/schemas/types",
+          "@query": "./src/db/schemas/queries",
+          "@mutation": "./src/db/schemas/mutations",
+          "@locale": "./src/locales",
+          "@log": "./src/logs",
+        }
+      }
+    ]
+  ],
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": { "node": "current", "esmodules": true  }
+      }
+    ],
+    "@babel/preset-typescript"
+  ]
+}
