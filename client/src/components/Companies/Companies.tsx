@@ -56,9 +56,6 @@ const Companies: FunctionComponent<Record<string, unknown>> = () => {
   const [search, setSearch] = useState<string>(s);
   const [selectedPage, setSelectedPage] = useState<number>(p);
   const [specialties, setSpecialties] = useState<string[]>(specs);
-  const companies =
-    useSelector((state: RootState) => state.companies.companies.companies) ||
-    [];
   const companyPageAmount = useSelector(
     (state: RootState) => state.companies.companyPageAmount.amount
   );
@@ -68,7 +65,7 @@ const Companies: FunctionComponent<Record<string, unknown>> = () => {
   const showPagination = ![Loading.INITIAL, Loading.PENDING].includes(
     companyPageAmountLoading
   );
-  let subscription = useRef<Subscription>();
+  const subscription = useRef<Subscription>();
 
   const getCompanies = useCallback(
     (params?: { search?: string; specialties?: string[]; page?: number }) => {
@@ -116,37 +113,40 @@ const Companies: FunctionComponent<Record<string, unknown>> = () => {
     setQueryParams({ search, specialties, page: selectedPage });
   };
 
-  const setQueryParams = ({
-    search,
-    specialties,
-    page
-  }: {
-    search: string;
-    specialties: string[];
-    page?: number;
-  }) => {
-    let searchQuery = '';
-    if (search) {
-      searchQuery = new URLSearchParams({ s: search }).toString();
-    }
-    if (specialties.length > 0) {
-      searchQuery = `${searchQuery}${
-        searchQuery ? '&' : ''
-      }${new URLSearchParams({ specs: specialties.join() }).toString()}`;
-    }
-    if (page && page !== 0) {
-      searchQuery = `${searchQuery}${
-        searchQuery ? '&' : ''
-      }${new URLSearchParams({ p: (page + 1).toString() }).toString()}`;
-    }
-    if (searchQuery) {
-      searchQuery = `?${searchQuery}`;
-    }
-    history.push({
-      pathname: '/',
-      search: searchQuery
-    });
-  };
+  const setQueryParams = useCallback(
+    ({
+      search,
+      specialties,
+      page
+    }: {
+      search: string;
+      specialties: string[];
+      page?: number;
+    }) => {
+      let searchQuery = '';
+      if (search) {
+        searchQuery = new URLSearchParams({ s: search }).toString();
+      }
+      if (specialties.length > 0) {
+        searchQuery = `${searchQuery}${
+          searchQuery ? '&' : ''
+        }${new URLSearchParams({ specs: specialties.join() }).toString()}`;
+      }
+      if (page && page !== 0) {
+        searchQuery = `${searchQuery}${
+          searchQuery ? '&' : ''
+        }${new URLSearchParams({ p: (page + 1).toString() }).toString()}`;
+      }
+      if (searchQuery) {
+        searchQuery = `?${searchQuery}`;
+      }
+      history.push({
+        pathname: '/',
+        search: searchQuery
+      });
+    },
+    [history]
+  );
 
   useEffect(() => {
     subscription.current = searchResultObservable.subscribe(
@@ -160,7 +160,7 @@ const Companies: FunctionComponent<Record<string, unknown>> = () => {
     return () => {
       subscription.current?.unsubscribe();
     };
-  }, [searchResultObservable, getCompanies]);
+  }, [getCompanies, getCompanyPageAmount, setQueryParams]);
 
   useEffect(() => {
     getCompanyPageAmount({ search, specialties });
