@@ -1,17 +1,11 @@
-import React, {
-  FunctionComponent,
-  useEffect,
-  useState,
-  useCallback,
-  useRef
-} from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import ReactPaginate from 'react-paginate';
 import styled from 'styled-components';
 import { Form } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppDispatch } from 'store/store';
 import {
   getCompaniesData,
@@ -44,9 +38,9 @@ const ReactPaginateContainer = styled.div<{ disabled: boolean }>`
   margin-top: 20px;
 `;
 
-const Companies: FunctionComponent<Record<string, unknown>> = () => {
+const Companies = () => {
   const dispatch = useAppDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { search: searchString } = useLocation();
   const s = new URLSearchParams(searchString).get('s') || '';
   let p = Number(new URLSearchParams(searchString).get('p') || '');
@@ -140,7 +134,7 @@ const Companies: FunctionComponent<Record<string, unknown>> = () => {
       if (searchQuery) {
         searchQuery = `?${searchQuery}`;
       }
-      history.push({
+      navigate({
         pathname: '/',
         search: searchQuery
       });

@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 import { Container } from 'react-bootstrap';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './styles/app.scss';
 import Companies from './components/Companies/Companies';
 
@@ -15,9 +15,9 @@ const App: FunctionComponent<Record<string, unknown>> = () => {
     <>
       <StyledContainer>
         <Router>
-          <Switch>
-            <Route exact path="/" component={Companies} />
-          </Switch>
+          <Routes>
+            <Route path="/" element={<Companies />} />
+          </Routes>
         </Router>
       </StyledContainer>
     </>

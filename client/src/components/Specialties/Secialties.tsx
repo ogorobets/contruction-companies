@@ -27,9 +27,8 @@ const Secialties: FunctionComponent<SecialtiesProps> = ({
   onChange,
   specialties: specialtiesProp
 }) => {
-  const [selectedSpecialties, setSelectedSpecialties] = useState<Array<string>>(
-    specialtiesProp
-  );
+  const [selectedSpecialties, setSelectedSpecialties] =
+    useState<Array<string>>(specialtiesProp);
   const specialties = useSelector(
     (state: RootState) => state.companies.specialties.specialties
   );

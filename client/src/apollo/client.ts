@@ -11,7 +11,7 @@ const link = new HttpLink({
 });
 const cache = new InMemoryCache();
 const client = new ApolloClient<NormalizedCacheObject>({
-  link: (link as unknown) as ApolloLink,
+  link: link as unknown as ApolloLink,
   cache
 });
 export default client;

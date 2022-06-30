@@ -1,10 +1,10 @@
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
-import rootReducer, { RootState } from './rootReducer';
+import rootReducer from './rootReducer';
 
 const store = configureStore({
   reducer: rootReducer,
-  middleware: [...getDefaultMiddleware<RootState>()]
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware()
 });
 
 export type AppDispatch = typeof store.dispatch;

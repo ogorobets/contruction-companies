@@ -18,18 +18,23 @@ export type GetCompanyPageAmountParams = {
   specialties: string[];
 };
 
-export const getCompaniesData = createAsyncThunk(
-  'company/getCompaniesQuery',
-  async (params: GetCompaniesDataParams) => {
-    const { data } = await client.query({
-      query: getCompaniesQuery,
-      variables: { ...params, perPage: 25 }
-    });
-    return { data };
-  }
-);
+export const getCompaniesData = createAsyncThunk<
+  any,
+  GetCompaniesDataParams,
+  any
+>('company/getCompaniesQuery', async (params: GetCompaniesDataParams) => {
+  const { data } = await client.query({
+    query: getCompaniesQuery,
+    variables: { ...params, perPage: 25 }
+  });
+  return { data };
+});
 
-export const getCompanyPageAmount = createAsyncThunk(
+export const getCompanyPageAmount = createAsyncThunk<
+  any,
+  GetCompanyPageAmountParams,
+  any
+>(
   'company/getCompanyPageAmount',
   async (params: GetCompanyPageAmountParams) => {
     const { data } = await client.query({
@@ -40,7 +45,7 @@ export const getCompanyPageAmount = createAsyncThunk(
   }
 );
 
-export const getSpecialtiesData = createAsyncThunk(
+export const getSpecialtiesData = createAsyncThunk<any, undefined, any>(
   'company/getSpecialties',
   async () => {
     const { data } = await client.query({
